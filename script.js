@@ -56,6 +56,13 @@ const examCardsContainer = document.querySelector('#exam-cards');
 const studyModeDiv = document.querySelector('#study-mode');
 const examModeDiv = document.querySelector('#exam-mode');
 
+const studyWordsSlider = document.querySelector('#words-progress');
+
+function updateStudyWordsSlider() {
+    const progress = ((currentWordIndex + 1) / words.length) * 100;
+    studyWordsSlider.style.width = `${progress}%`;
+}
+
 function displayWord() {
     cardFront.textContent = words[currentWordIndex].front;
     cardBackWord.textContent = words[currentWordIndex].back;
@@ -65,6 +72,8 @@ function displayWord() {
 
     backButton.disabled = currentWordIndex === 0;
     nextButton.disabled = currentWordIndex === words.length - 1;
+    flipCard.classList.remove('active');
+    updateStudyWordsSlider();
 }
 
 function nextWord() {
@@ -115,7 +124,7 @@ async function handleExamCardClick(event) {
     const index = parseInt(card.dataset.index);
     const word = examWords[index];
 
-    if (card.classList.contains('correct') || card.classList.contains('wrong')) {
+    if (card.classList.contains('correct') || card.classList.contains('wrong') || card.classList.contains('hidden')) {
         return; 
     }
 
@@ -136,9 +145,7 @@ async function handleExamCardClick(event) {
             firstCard.card.classList.add('fade-out');
             card.classList.add('fade-out');
             await new Promise((resolve) => setTimeout(resolve, 500)); 
-            firstCard.card.remove();
-            card.remove();
-
+            
             examWords[firstCard.index] = null; 
             examWords[index] = null;
 
